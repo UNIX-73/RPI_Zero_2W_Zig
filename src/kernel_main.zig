@@ -1,6 +1,10 @@
-const GPIO = @import("drivers/drivers.zig").GPIO;
-const MU = @import("drivers/drivers.zig").AUX.MINI_UART;
-const EL = @import("boot/exception_level/exception_level.zig");
+const GPIO = @import("drivers").GPIO;
+const IRQ = @import("drivers").IRQ;
+const MU = @import("drivers").AUX.MINI_UART;
+
+const EL = @import("boot").EL;
+
+const a = @import("irq");
 
 fn write_str(str: []const u8) void {
     for (str) |b| {
@@ -11,15 +15,19 @@ fn write_str(str: []const u8) void {
     }
 }
 
-extern fn switch_to_el1() noreturn;
-
 export fn kernel_main() noreturn {
+    _ = a;
+
+    MU.init();
+
     GPIO.set_function_select(21, .OUTPUT);
     GPIO.set_pin(21);
 
-    switch_to_el1();
+    if (EL.read_el() != 1)
+        EL.switch_to_el1();
 
-    MU.init();
+    IRQ.cpu_irq_enable();
+    IRQ.enable_irq(.MINI_UART);
 
     var t: bool = true;
 
@@ -36,7 +44,7 @@ export fn kernel_main() noreturn {
 
         t = !t;
 
-        write_str("Hello world!\r\n");
+        write_str("Hello worldaa!\r\n");
 
         write_str(&.{@intCast(EL.read_el() + 48)});
     }

@@ -1,4 +1,4 @@
-const GPIO_BASE = @import("../peripherals.zig").BASE + 0x200000;
+const GPIO_BASE = @import("./peripherals.zig").BASE + 0x200000;
 
 const GPIO_REG_OFFSETS = enum(u32) {
     FSEL_OFFSET = 0x0,

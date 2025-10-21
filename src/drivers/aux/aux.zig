@@ -1,6 +1,6 @@
 pub const MINI_UART = @import("mini_uart.zig");
 
-const AUX_BASE = @import("../../peripherals.zig").BASE + 0x215000;
+const AUX_BASE = @import("../peripherals.zig").BASE + 0x215000;
 
 const AUX_REG_OFFSETS = enum(u32) {
     IRQ_OFFSET = 0x000,

@@ -30,7 +30,8 @@ pub fn init() void {
     AUX_REGS.mu_cntl().* = 0b11;
 
     // Enable Irq
-    //  AUX_REGS.mu_ier().* = 0b1;
+    AUX_REGS.mu_ier().* = 0b1;
+
 }
 
 pub inline fn read() u8 {
