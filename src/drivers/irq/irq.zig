@@ -2,7 +2,7 @@ const std = @import("std");
 const PERIPHERAL_BASE = @import("../peripherals.zig").BASE;
 
 /// Base address for IRQ registers (relative to peripheral base)
-const IRQ_BASE = PERIPHERAL_BASE + 0x0000_B200;
+const IRQ_BASE = PERIPHERAL_BASE + 0xB000;
 
 /// IRQ register offsets
 const IRQ_REG_OFFSETS = enum(u32) {
@@ -76,9 +76,10 @@ pub fn disable_irq(option: IRQ_OPTIONS) void {
     IRQ_REGS.disable1().* |= option.value();
 }
 
-/// Assembly functions to globally enable/disable CPU IRQs
-pub extern fn cpu_irq_enable() void; // → msr DAIFClr, #2
-pub extern fn cpu_irq_disable() void; // → msr DAIFSet, #2
+/// msr DAIFClr, #2
+pub extern fn cpu_irq_enable() void;
+/// msr DAIFSet, #2
+pub extern fn cpu_irq_disable() void;
 
 /// Software interrupt (Supervisor Call)
 pub fn trigger_svc() void {

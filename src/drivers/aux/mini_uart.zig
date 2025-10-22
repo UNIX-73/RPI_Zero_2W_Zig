@@ -13,7 +13,7 @@ pub fn init() void {
     GPIO.set_pull_up_down(14, .OFF);
     GPIO.set_pull_up_down(15, .OFF);
 
-    AUX_REGS.enables().* = 0b1;
+    AUX_REGS.enables().* |= 0b1;
 
     AUX_REGS.mu_cntl().* = 0b0;
 
@@ -30,8 +30,7 @@ pub fn init() void {
     AUX_REGS.mu_cntl().* = 0b11;
 
     // Enable Irq
-    AUX_REGS.mu_ier().* = 0b1;
-
+    AUX_REGS.mu_ier().* = 1 << 0;
 }
 
 pub inline fn read() u8 {

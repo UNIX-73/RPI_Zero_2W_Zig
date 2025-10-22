@@ -40,7 +40,6 @@ pub fn build(b: *std.Build) void {
     elf.root_module.addImport("boot", boot_module);
 
     // -- ASM --
-  
 
     elf.setLinkerScript(b.path("./linker.ld"));
 

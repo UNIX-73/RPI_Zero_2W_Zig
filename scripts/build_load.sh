@@ -2,26 +2,38 @@
 set -euo pipefail
 
 BIN_DIR="./zig-out/bin"
-SD_DIR="/run/media/unab/RPI SD"
+IMG_NAME="kernel8.img"
+MOUNT_POINT="/run/media/unai/RPI SD"
+DEVICE="/dev/sdb1"
 
 echo "[*] Building kernel..."
-cd .. & zig build || { echo "❌ Error: build failed"; exit 1; }
+zig build || { echo "❌ Error: build failed"; exit 1; }
 
-# Check if the binary exists
-if [[ ! -f "$BIN_DIR/kernel8.img" ]]; then
-    echo "❌ Error: $BIN_DIR/kernel8.img not found"
+# Comprobar que existe el binario
+if [[ ! -f "$BIN_DIR/$IMG_NAME" ]]; then
+    echo "❌ Error: $BIN_DIR/$IMG_NAME not found"
     exit 1
 fi
 
-# Check if the SD card is mounted
-if [[ ! -d "$SD_DIR" ]]; then
-    echo "❌ Error: SD directory not found ($SD_DIR)"
-    exit 1
+echo "[*] Verificando si la SD está montada..."
+if ! mountpoint -q "$MOUNT_POINT"; then
+    echo "[*] Montando SD en $MOUNT_POINT..."
+    sudo mkdir -p "$MOUNT_POINT"
+    sudo mount "$DEVICE" "$MOUNT_POINT" || {
+        echo "❌ Error: no se pudo montar $DEVICE en $MOUNT_POINT"
+        exit 1
+    }
+else
+    echo "[✓] SD ya está montada."
 fi
 
-echo "[*] Copying kernel8.img to SD card..."
-rm -f "$SD_DIR/kernel8.img" || true
-cp "$BIN_DIR/kernel8.img" "$SD_DIR/kernel8.img"
+echo "[*] Copiando kernel a la SD..."
+sudo cp "$BIN_DIR/$IMG_NAME" "$MOUNT_POINT/" || {
+    echo "❌ Error al copiar el kernel"
+    exit 1
+}
 
-sync  # ensure all writes are flushed before removing the SD
-echo "✅ Kernel copied successfully."
+echo "[*] Sincronizando..."
+sync
+
+echo "[✓] Kernel actualizado correctamente en la SD."

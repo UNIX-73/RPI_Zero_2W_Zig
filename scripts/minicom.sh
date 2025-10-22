@@ -1,3 +1,8 @@
-COMMAND = minicom -b 115200 -o -D /dev/ttyUSB0
+#!/usr/bin/env bash
+set -euo pipefail
 
-kitty -e bash -lc "$COMMAND; exec bash" &
+DEVICE="/dev/ttyUSB0"
+BAUD="115200"
+COMMAND="minicom -b ${BAUD} -o -D ${DEVICE}"
+
+kitty -e ${COMMAND} &
